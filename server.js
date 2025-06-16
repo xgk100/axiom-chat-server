@@ -48,11 +48,12 @@ wss.on('connection', (ws) => {
                 break;
 
             case 'chat':
-                if (currentRoom && username) {
+                // Use data.username directly from the client's message
+                if (currentRoom && data.username && data.content) {
                     const message = {
                         type: 'chat',
-                        username,
-                        content: data.message
+                        username: data.username, // Get username from the message payload
+                        content: data.content // Ensure content is from data.content, not data.message
                     };
                     
                     // Broadcast to all users in the room
