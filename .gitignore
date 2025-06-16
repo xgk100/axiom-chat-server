@@ -1,0 +1,18 @@
+# Ignore Chrome extension directories
+axiom-chat-extension/
+axiom-extension/
+
+# Ignore Node.js modules
+node_modules/
+package-lock.json
+
+# Ignore common OS files
+.DS_Store
+
+# Ignore other files not part of the server
+background.js
+content.js
+manifest.json
+popup.html
+popup.js
+styles.css 
