@@ -64,10 +64,12 @@ wss.on('connection', (ws, req) => {
                         content: data.content // Ensure content is from data.content, not data.message
                     };
                     
+                    console.log(`Broadcasting message to room ${currentRoom}:`, message); // Log before broadcast
                     // Broadcast to all users in the room
                     rooms.get(currentRoom)?.forEach(client => {
                         if (client.readyState === WebSocket.OPEN) {
                             client.send(JSON.stringify(message));
+                            console.log(`Sent message to client in room ${currentRoom}.`); // Log each send attempt
                         }
                     });
                 }
