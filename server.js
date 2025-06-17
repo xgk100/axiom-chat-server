@@ -1,7 +1,13 @@
 const WebSocket = require('ws');
 const http = require('http');
 
-const server = http.createServer();
+const server = http.createServer((req, res) => {
+    // This part is for HTTP requests, which our WebSocket server doesn't use directly for client communication.
+    // However, Render might probe it.
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('WebSocket server is running.\n');
+});
+
 const wss = new WebSocket.Server({ server });
 
 // Store active rooms and their users
@@ -9,11 +15,13 @@ const rooms = new Map();
 // Store emoji ratings for tokens
 const tokenRatings = new Map();
 
-wss.on('connection', (ws) => {
+wss.on('connection', (ws, req) => {
+    console.log(`Client connected: ${req.socket.remoteAddress}`); // Log client connection
     let currentRoom = null;
     let username = null;
 
     ws.on('message', (message) => {
+        console.log(`Received message from client: ${message}`); // Log raw message
         const data = JSON.parse(message);
         
         switch (data.type) {
@@ -95,6 +103,7 @@ wss.on('connection', (ws) => {
     });
 
     ws.on('close', () => {
+        console.log(`Client disconnected from room ${currentRoom || 'N/A'}`); // Log client disconnection
         if (currentRoom) {
             const room = rooms.get(currentRoom);
             if (room) {
@@ -105,9 +114,19 @@ wss.on('connection', (ws) => {
             }
         }
     });
+
+    ws.on('error', (error) => {
+        console.error(`WebSocket client error: ${error.message}`); // Log WebSocket client errors
+    });
+});
+
+// Listen for HTTP server errors
+server.on('error', (err) => {
+    console.error('HTTP server error:', err);
 });
 
 const PORT = process.env.PORT || 8080;
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => { // Explicitly bind to 0.0.0.0
     console.log(`WebSocket server is running on port ${PORT}`);
+    console.log(`process.env.PORT is: ${process.env.PORT}`); // Log the actual environment variable
 }); 
