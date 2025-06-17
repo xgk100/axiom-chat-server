@@ -108,6 +108,24 @@ wss.on('connection', (ws, req) => {
             case 'updateUsername':
                 username = data.username;
                 break;
+            
+            case 'audio': // NEW: Handle incoming audio data
+                if (currentRoom && data.data) {
+                    const audioMessage = {
+                        type: 'audio',
+                        roomId: currentRoom,
+                        data: data.data // The audio ArrayBuffer as an array of numbers
+                    };
+                    console.log(`Broadcasting audio data to room ${currentRoom}.`);
+                    rooms.get(currentRoom)?.forEach(client => {
+                        if (client !== ws && client.readyState === WebSocket.OPEN) { // Don't send back to sender
+                            client.send(JSON.stringify(audioMessage));
+                        }
+                    });
+                } else {
+                    console.warn(`Audio data broadcast condition not met. currentRoom: ${currentRoom}, data.data: ${data.data}`);
+                }
+                break;
         }
     });
 
