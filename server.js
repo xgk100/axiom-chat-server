@@ -56,7 +56,7 @@ wss.on('connection', (ws, req) => {
                 break;
 
             case 'chat':
-                // Use data.username directly from the client's message
+                console.log(`Server received chat message. currentRoom: ${currentRoom}, data.username: ${data.username}, data.content: ${data.content}`);
                 if (currentRoom && data.username && data.content) {
                     const message = {
                         type: 'chat',
@@ -70,8 +70,12 @@ wss.on('connection', (ws, req) => {
                         if (client.readyState === WebSocket.OPEN) {
                             client.send(JSON.stringify(message));
                             console.log(`Sent message to client in room ${currentRoom}.`); // Log each send attempt
+                        } else {
+                            console.warn(`Skipping client in room ${currentRoom} due to readyState: ${client.readyState}`);
                         }
                     });
+                } else {
+                    console.warn(`Broadcast condition not met for chat message. currentRoom: ${currentRoom}, username: ${data.username}, content: ${data.content}`);
                 }
                 break;
 
