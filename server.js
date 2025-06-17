@@ -61,8 +61,9 @@ wss.on('connection', (ws, req) => {
                 if (currentRoom && data.username && data.content) {
                     const message = {
                         type: 'chat',
-                        username: data.username, // Get username from the message payload
-                        content: data.content // Ensure content is from data.content, not data.message
+                        roomId: currentRoom,
+                        username: data.username,
+                        content: data.content
                     };
                     
                     console.log(`Broadcasting message to room ${currentRoom}:`, message); // Log before broadcast
