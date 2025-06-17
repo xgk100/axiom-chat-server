@@ -63,7 +63,8 @@ wss.on('connection', (ws, req) => {
                         type: 'chat',
                         roomId: currentRoom,
                         username: data.username,
-                        content: data.content
+                        content: data.content,
+                        timestamp: Date.now()
                     };
                     
                     console.log(`Broadcasting message to room ${currentRoom}:`, message); // Log before broadcast
