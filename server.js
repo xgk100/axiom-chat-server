@@ -26,6 +26,7 @@ wss.on('connection', (ws, req) => {
         
         switch (data.type) {
             case 'joinRoom':
+                console.log(`Server received joinRoom message for room: ${data.roomId}`);
                 // Leave previous room if any
                 if (currentRoom) {
                     const room = rooms.get(currentRoom);
